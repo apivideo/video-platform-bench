@@ -1,0 +1,15 @@
+
+###> symfony/framework-bundle ###
+/.env.local
+/.env.local.php
+/.env.*.local
+/config/secrets/prod/prod.decrypt.private.php
+/public/bundles/
+/var/
+/vendor/
+###< symfony/framework-bundle ###
+
+/.idea
+
+code_secret_client_anthony_dantard_at_libcastcom.json
+code_secret_client_anthony_at_apivideo.json

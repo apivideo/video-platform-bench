@@ -1,0 +1,78 @@
+{
+    "type": "project",
+    "license": "proprietary",
+    "minimum-stability": "stable",
+    "prefer-stable": true,
+    "require": {
+        "php": ">=8.0",
+        "ext-ctype": "*",
+        "ext-curl": "*",
+        "ext-iconv": "*",
+        "ext-pcntl": "*",
+        "api-video/php-api-client": "^0.0.4",
+        "aws/aws-sdk-php-symfony": "^2.2",
+        "google/apiclient": "^2.0",
+        "jwplayer/jwplatform": "^1.7",
+        "muxinc/mux-php": "^1.0",
+        "nyholm/psr7": "^1.4",
+        "symfony/console": "5.3.*",
+        "symfony/dotenv": "5.3.*",
+        "symfony/flex": "^1.3.1",
+        "symfony/framework-bundle": "5.3.*",
+        "symfony/http-client": "5.3.*",
+        "symfony/process": "5.3.*",
+        "symfony/runtime": "5.3.*",
+        "symfony/yaml": "5.3.*",
+        "vimeo/vimeo-api": "^3.0"
+    },
+    "require-dev": {
+        "rector/rector": "^0.11.52",
+        "symplify/config-transformer": "^9.4"
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "preferred-install": {
+            "*": "dist"
+        },
+        "sort-packages": true
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "App\\Tests\\": "tests/"
+        }
+    },
+    "replace": {
+        "symfony/polyfill-ctype": "*",
+        "symfony/polyfill-iconv": "*",
+        "symfony/polyfill-php72": "*"
+    },
+    "scripts": {
+        "auto-scripts": {
+            "cache:clear": "symfony-cmd",
+            "assets:install %PUBLIC_DIR%": "symfony-cmd"
+        },
+        "post-install-cmd": [
+            "@auto-scripts"
+        ],
+        "post-update-cmd": [
+            "@auto-scripts"
+        ]
+    },
+    "conflict": {
+        "symfony/symfony": "*"
+    },
+    "extra": {
+        "symfony": {
+            "allow-contrib": false,
+            "require": "5.3.*"
+        },
+        "google/apiclient-services": [
+            "YouTube"
+        ]
+    }
+}
