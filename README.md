@@ -1,14 +1,21 @@
-[![badge](https://img.shields.io/twitter/follow/api_video?style=social)](https://twitter.com/intent/follow?screen_name=api_video)
-
-[![badge](https://img.shields.io/github/stars/apivideo/video-platform-bench?style=social)](https://github.com/apivideo/video-platform-bench)
-
-[![badge](https://img.shields.io/discourse/topics?server=https%3A%2F%2Fcommunity.api.video)](https://community.api.video)
-
+[![badge](https://img.shields.io/twitter/follow/api_video?style=social)](https://twitter.com/intent/follow?screen_name=api_video) &nbsp; [![badge](https://img.shields.io/github/stars/apivideo/video-platform-bench?style=social)](https://github.com/apivideo/video-platform-bench) &nbsp; [![badge](https://img.shields.io/discourse/topics?server=https%3A%2F%2Fcommunity.api.video)](https://community.api.video)
 ![](https://github.com/apivideo/API_OAS_file/blob/master/apivideo_banner.png)
+<h1 align="center">Video Platforms Benchmark</h1>
 
-[api.video](https://api.video) is an API that encodes on the go to facilitate immediate playback, enhancing viewer streaming experiences across multiple devices and platforms. You can stream live or on-demand online videos within minutes.
+[api.video](https://api.video) is the video infrastructure for product builders. Lightning fast video APIs for integrating, scaling, and managing on-demand & low latency live streaming features in your app.
 
-# Video Platforms Benchmark
+# Table of contents
+
+- [Project description](#project-description)
+  - [VOD benchmark](#VOD benchmark)
+  - [Live benchmark](#Live benchmark)
+- [Getting started](#getting-started)
+   - [Requirements before Installation](#Requirements before Installation)
+   - [Installation](#installation)
+   - [Usage](#Usage)
+- [Have you gotten use from this app?](#Have you gotten use from this app?)
+
+# Project description
 
 This app aims to benchmark several video/live streaming OTT platforms based on Encoding Time performance and provide also a "Time to Playback" metric.
 
@@ -22,6 +29,7 @@ The app measure 3 metrics when it's possible according to each platform limitati
 ### What platforms are currently supported
 * api.video
 * AWS(MediaConvert + S3 + CloudFront)
+* Cloudflare Stream
 * JW Player
 * mux.com
 * Vimeo
@@ -38,6 +46,7 @@ The app measure one metric:
 * AWS(Elemental MediaLive + Elemental MediaPackage + S3 + CloudFront)
 * mux.com
 
+# Getting started
 ## Requirements before Installation
 * Create account and credentials for each platform
 * (AWS VOD) Create a S3 bucket. [Follow official instruction to create one](https://docs.aws.amazon.com/mediaconvert/latest/ug/set-up-file-locations.html)
@@ -46,14 +55,19 @@ The app measure one metric:
 * (AWS Live) Edit the file `live-streaming-on-aws-custom.template` at line 34 and enter the CIDR Block of the server that will push the RTMP stream.
 * (AWS Live)Upload the edited template to an AWS S3 bucket.
 
-## Installation & Run
+## Installation
 1. Clone this repo
 2. Set environmental variables
 3. Install dependencies with: `composer install`
-4. (VOD) Run on localhost `symfony server:start` to start a local web-server
-5. Launch the benchmark with command line:
+
+## Usage
+* (VOD) Run on localhost `symfony server:start` to start a local web-server
+* Launch the benchmark with command line:
     * VOD: `bin/console bench-video-platform {FILE_TO_UPLOAD_URL}`
     * Live: `bin/console bench-live-platform {FILE_TO_STREAM_URL}`
 
-## Discover api.video
-[Learn more on api.video](https://api.video/encoding/)
+# Have you gotten use from this app?
+
+Please take a moment to leave a star on the client ⭐
+
+This helps other users to find the clients and also helps us understand which clients are most popular. Thank you!
