@@ -3,6 +3,7 @@ declare(strict_types=1);
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 use ApiVideo\Client\Client;
 use App\Service\BenchAWSService;
+use App\Service\BenchCloudflareStreamService;
 use Jwplayer\JwplatformAPI;
 use MuxPhp\Api\AssetsApi;
 use MuxPhp\Api\LiveStreamsApi;
@@ -66,5 +67,11 @@ return static function (ContainerConfigurator $configurator): void {
         ->call('setVodArnRoleIamMediaConvert', ['%env(AWS_VOD_ARN_ROLE_IAM_MEDIA_CONVERT)%'])
         ->call('setVodCloudfrontEndpoint', ['%env(AWS_VOD_CLOUDFRONT_ENDPOINT)%'])
         ->call('setLiveTemplateUrl', ['%env(AWS_LIVE_TEMPLATE_URL)%']);
+
+    $services->set(\GuzzleHttp\Client::class, \GuzzleHttp\Client::class);
+
+    $services->set(BenchCloudflareStreamService::class, BenchCloudflareStreamService::class)
+        ->arg('$accountId', env('CLOUDFLARE_ACCOUNT_ID'))
+        ->arg('$apiToken', env('CLOUDFLARE_API_TOKEN'));
 
 };

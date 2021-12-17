@@ -6,6 +6,7 @@ namespace App\Controller;
 
 use App\Service\BenchApiVideoService;
 use App\Service\BenchAWSService;
+use App\Service\BenchCloudflareStreamService;
 use App\Service\BenchJWPlayerService;
 use App\Service\BenchMuxService;
 use App\Service\BenchVimeoService;
@@ -25,7 +26,17 @@ class BenchVideoPlatformController extends AbstractController
 {
     private array $results = [];
 
-    public function __construct(private CacheInterface $cache, private Google_Client $googleClient, private BenchMuxService $muxBench, private BenchApiVideoService $apivideoBench, private BenchYoutubeService $youtubeBench, private BenchJWPlayerService $jwPlayerBench, private BenchAWSService $awsBench, private BenchVimeoService $vimeoBench)
+    public function __construct(
+        private CacheInterface $cache,
+        private Google_Client $googleClient,
+        private BenchMuxService $muxBench,
+        private BenchApiVideoService $apivideoBench,
+        private BenchYoutubeService $youtubeBench,
+        private BenchJWPlayerService $jwPlayerBench,
+        private BenchAWSService $awsBench,
+        private BenchVimeoService $vimeoBench,
+        private BenchCloudflareStreamService $cloudflareStreamBench
+    )
     {
     }
 
@@ -45,9 +56,9 @@ class BenchVideoPlatformController extends AbstractController
             'https://www.googleapis.com/auth/youtube'
         ]);
         $cached_token = $this->cache->getItem('google_access_token');
-        if ($cached_token->isHit()){
+        if ($cached_token->isHit()) {
             $this->youtubeBench->setAccessToken($cached_token->get());
-        }else{
+        } else {
             print("Not authenticate to Google API \n");
             $this->googleClient->setAccessType('offline');
             $this->googleClient->setPrompt("consent");
@@ -59,7 +70,7 @@ class BenchVideoPlatformController extends AbstractController
             exit(0);
         }
 
-        $this->results['date'] =  date('c');
+        $this->results['date'] = date('c');
 
         // Mux bench
         $this->results['mux'] = $this->muxBench->performVod($videoUriPath);
@@ -78,6 +89,9 @@ class BenchVideoPlatformController extends AbstractController
 
         // Vimeo Benchmark
         $this->results['vimeo'] = $this->vimeoBench->performVod($videoUriPath);
+
+        // Cloudflare Stream Benchmark
+        $this->results['cloudflare'] = $this->cloudflareStreamBench->performVod($videoUriPath);
 
         return new JsonResponse($this->results);
     }

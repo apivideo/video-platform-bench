@@ -6,6 +6,7 @@ namespace App\Controller;
 
 use App\Service\BenchApiVideoService;
 use App\Service\BenchAWSService;
+use App\Service\BenchCloudflareStreamService;
 use App\Service\BenchJWPlayerService;
 use App\Service\BenchMuxService;
 use App\Service\BenchVimeoService;
@@ -18,7 +19,15 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 class BenchLivePlatformController extends AbstractController
 {
 
-    public function __construct(private BenchMuxService $muxBench, private BenchApiVideoService $apivideoBench, private BenchYoutubeService $youtubeBench, private BenchJWPlayerService $jwPlayerBench, private BenchAWSService $awsBench, private BenchVimeoService $vimeoBench)
+    public function __construct(
+        private BenchMuxService $muxBench,
+        private BenchApiVideoService $apivideoBench,
+        private BenchYoutubeService $youtubeBench,
+        private BenchJWPlayerService $jwPlayerBench,
+        private BenchAWSService $awsBench,
+        private BenchVimeoService $vimeoBench,
+        private BenchCloudflareStreamService $cloudflareBench
+    )
     {
     }
 
@@ -54,6 +63,9 @@ class BenchLivePlatformController extends AbstractController
         // Vimeo Benchmark
         $vimeoResult = $this->vimeoBench->performLive($filePath);
 
+        // Clouflare Stream Benchmark
+        $cloudflareResult = $this->cloudflareBench->performLive($filePath);
+
         $benchmark = [
             'date' => date('c'),
             'mux' => $muxResult,
@@ -62,6 +74,7 @@ class BenchLivePlatformController extends AbstractController
             'jwplayer' => $jwPlayerResult,
             'aws' => $awsResult,
             'vimeo' => $vimeoResult,
+            'cloudflare' => $cloudflareResult,
         ];
 
         // Delete tmp file
