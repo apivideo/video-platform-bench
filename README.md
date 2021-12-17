@@ -7,13 +7,13 @@
 # Table of contents
 
 - [Project description](#project-description)
-  - [VOD benchmark](#VOD benchmark)
-  - [Live benchmark](#Live benchmark)
+  - [VOD benchmark](#VOD-benchmark)
+  - [Live benchmark](#Live-benchmark)
 - [Getting started](#getting-started)
-   - [Requirements before Installation](#Requirements before Installation)
+   - [Requirements before Installation](#Requirements-before-Installation)
    - [Installation](#installation)
    - [Usage](#Usage)
-- [Have you gotten use from this app?](#Have you gotten use from this app?)
+- [Have you gotten use from this app?](#Have-you-gotten-use-from-this-app?)
 
 # Project description
 
