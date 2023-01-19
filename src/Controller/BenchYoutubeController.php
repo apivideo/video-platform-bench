@@ -4,38 +4,23 @@
 namespace App\Controller;
 
 
-use App\Service\BenchApiVideoService;
-use App\Service\BenchAWSService;
-use App\Service\BenchCloudflareStreamService;
-use App\Service\BenchJWPlayerService;
-use App\Service\BenchMuxService;
-use App\Service\BenchVimeoService;
 use App\Service\BenchYoutubeService;
-use Exception;
 use Google_Client;
-use MuxPhp\ApiException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Cache\CacheInterface;
-use Vimeo\Exceptions\VimeoRequestException;
 
-class BenchVideoPlatformController extends AbstractController
+class BenchYoutubeController extends AbstractController
 {
     private array $results = [];
 
     public function __construct(
-        private CacheInterface               $cache,
-        private Google_Client                $googleClient,
-        private BenchMuxService              $muxBench,
-        private BenchApiVideoService         $apivideoBench,
-        private BenchYoutubeService          $youtubeBench,
-        private BenchJWPlayerService         $jwPlayerBench,
-        private BenchAWSService              $awsBench,
-        private BenchVimeoService            $vimeoBench,
-        private BenchCloudflareStreamService $cloudflareStreamBench
+        private CacheInterface      $cache,
+        private Google_Client       $googleClient,
+        private BenchYoutubeService $youtubeBench,
     )
     {
     }
@@ -43,36 +28,13 @@ class BenchVideoPlatformController extends AbstractController
     /**
      * @param string $videoUriPath
      * @return JsonResponse
-     * @throws ApiException
-     * @throws VimeoRequestException
-     * @throws Exception
      */
     public function benchmark(string $videoUriPath): JsonResponse
     {
-        $this->authenticateYoutube();
-
         $this->results['date'] = date('c');
-
-        // Mux bench
-        $this->results['mux'] = $this->muxBench->performVod($videoUriPath);
-
-        // api.video bench
-        $this->results['api.video'] = $this->apivideoBench->performVod($videoUriPath);
 
         // YouTube bench
         $this->results['youtube'] = $this->youtubeBench->performVod($videoUriPath);
-
-        // JW Player bench
-        $this->results['jwplayer'] = $this->jwPlayerBench->performVod($videoUriPath);
-
-        // AWS MediaConvert Bench
-        $this->results['aws'] = $this->awsBench->performVod($videoUriPath);
-
-        // Vimeo Benchmark
-        $this->results['vimeo'] = $this->vimeoBench->performVod($videoUriPath);
-
-        // Cloudflare Stream Benchmark
-        $this->results['cloudflare'] = $this->cloudflareStreamBench->performVod($videoUriPath);
 
         return new JsonResponse($this->results);
     }
@@ -93,7 +55,7 @@ class BenchVideoPlatformController extends AbstractController
         return new Response('Authenticated, you can relaunch the command');
     }
 
-    public function authenticateYoutube()
+    public function authenticate()
     {
         // Init client and authorizations config
         $this->googleClient->setScopes([

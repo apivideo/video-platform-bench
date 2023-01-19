@@ -34,27 +34,7 @@ class BenchJWPlayerService
 
         $videoId = $video['video']['key'];
 
-        // Waiting for first rendition processed
-        do {
-            $firstRenditionProcessed = false;
-            $jwVideoRenditionsStatus = $this->jw->call('/videos/conversions/list', [
-                'video_key' => $videoId
-            ]);
-            $videoRenditions = array_filter($jwVideoRenditionsStatus['conversions'], function ($rendition) {
-                return $rendition['mediatype'] === 'video';
-            });
-            foreach ($videoRenditions as $conversionJob) {
-                if ($conversionJob['status'] === 'Ready') {
-                    $firstRenditionProcessed = true;
-                }
-            }
-            sleep(1);
-        } while ($firstRenditionProcessed === false);
-
-        // Compute EncodingTime measure
-        $encodingTime = microtime(true) - $startEncodingTime;
-
-        // Checking all encoding are done
+        // Waiting for first HLS rendition processed
         do {
             $jwVideoStatus = $this->jw->call('/videos/show', [
                 'video_key' => $videoId
@@ -62,8 +42,8 @@ class BenchJWPlayerService
             sleep(1);
         } while ($jwVideoStatus['video']['status'] !== 'ready');
 
-        // Compute FullEncodingTime measure
-        $fullEncodingTime = microtime(true) - $startEncodingTime;
+        // Compute EncodingTime measure
+        $encodingTime = microtime(true) - $startEncodingTime;
 
         // Download master hls manifest
         do {
@@ -71,6 +51,7 @@ class BenchJWPlayerService
             sleep(1);
         } while (strpos($file_headers[0], '404') !== false);
         $masterManifestHls = file_get_contents("https://cdn.jwplayer.com/manifests/$videoId.m3u8");
+        echo "https://cdn.jwplayer.com/manifests/$videoId.m3u8 \n";
 
         // Extract url of the first playlist manifest
         preg_match('/https:\/\/.*/', $masterManifestHls, $matchMasterHls);
@@ -92,6 +73,25 @@ class BenchJWPlayerService
 
         // Compute TimeToPlayback measure
         $timeToPlayback = microtime(true) - $startTimeToPlayback;
+
+        // Checking all encoding are done
+        $encodingDone = false;
+        do {
+            $jwVideoRenditionsStatus = $this->jw->call('/videos/conversions/list', [
+                'video_key' => $videoId
+            ]);
+            $videoRenditionsInProgress = array_filter($jwVideoRenditionsStatus['conversions'], function ($rendition) {
+                return $rendition['status'] === 'Queued';
+            });
+
+            if(empty($videoRenditionsInProgress)){
+                $encodingDone = true;
+            }
+            sleep(1);
+        } while ($encodingDone === false);
+
+        // Compute FullEncodingTime measure
+        $fullEncodingTime = microtime(true) - $startEncodingTime;
 
         $this->jw->call('/videos/delete', [
             'video_key' => $videoId

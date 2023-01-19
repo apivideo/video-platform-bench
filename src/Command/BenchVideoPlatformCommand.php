@@ -2,18 +2,34 @@
 
 namespace App\Command;
 
+use App\Controller\BenchApiVideoController;
+use App\Controller\BenchAWSController;
+use App\Controller\BenchCloudflareController;
+use App\Controller\BenchJWPlayerController;
+use App\Controller\BenchMuxController;
 use App\Controller\BenchVideoPlatformController;
+use App\Controller\BenchVimeoController;
+use App\Controller\BenchYoutubeController;
 use Google\Exception;
 use MuxPhp\ApiException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Vimeo\Exceptions\VimeoRequestException;
 
 class BenchVideoPlatformCommand extends Command
 {
-    public function __construct(private BenchVideoPlatformController $benchVideoPlatform)
+    public function __construct(
+        private BenchApiVideoController $apiVideoController,
+        private BenchMuxController $muxController,
+        private BenchAWSController $awsController,
+        private BenchJWPlayerController $jwPlayerController,
+        private BenchVimeoController $vimeoController,
+        private BenchYoutubeController $youtubeController,
+        private BenchCloudflareController $cloudflareController
+    )
     {
         parent::__construct();
     }
@@ -28,9 +44,10 @@ class BenchVideoPlatformCommand extends Command
     }
 
     /**
-     * @throws VimeoRequestException
-     * @throws ApiException
-     * @throws Exception
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @return int
+     * @throws \Exception
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
@@ -45,8 +62,34 @@ class BenchVideoPlatformCommand extends Command
 
         $output->writeln("Benchmark in progress...");
 
-        $response = $this->benchVideoPlatform->benchmark($videoUriPath);
+        $this->youtubeController->authenticate();
 
+        $response = $this->apiVideoController->benchmark($videoUriPath);
+        $this->displayResult($response, $output);
+
+        $response = $this->muxController->benchmark($videoUriPath);
+        $this->displayResult($response, $output);
+
+        $response = $this->vimeoController->benchmark($videoUriPath);
+        $this->displayResult($response, $output);
+
+        $response = $this->cloudflareController->benchmark($videoUriPath);
+        $this->displayResult($response, $output);
+
+        $response = $this->jwPlayerController->benchmark($videoUriPath);
+        $this->displayResult($response, $output);
+
+        $response = $this->awsController->benchmark($videoUriPath);
+        $this->displayResult($response, $output);
+
+        $response = $this->youtubeController->benchmark($videoUriPath);
+        $this->displayResult($response, $output);
+
+        return Command::SUCCESS;
+    }
+
+    private function displayResult(JsonResponse $response, OutputInterface $output):void
+    {
         $results = json_decode($response->getContent(), true);
         $output->writeln("<info>Date: {$results['date']}</info>");
         unset($results['date']);
@@ -58,6 +101,5 @@ class BenchVideoPlatformCommand extends Command
             }
             $output->writeln("================");
         }
-        return Command::SUCCESS;
     }
 }

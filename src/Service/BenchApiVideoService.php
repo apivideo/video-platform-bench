@@ -42,8 +42,11 @@ class BenchApiVideoService
         // Waiting for Ready status
         do {
             $videoStatus = $this->apivideo->videos()->getStatus($video->getVideoId());
+            $videoQualitiesStatusHLS = array_filter($videoStatus->getEncoding()->getQualities(), function ($quality){
+                return $quality['type'] === 'hls';
+            });
             usleep(500);
-        } while ($videoStatus->getEncoding()->getPlayable() !== true);
+        } while ($this->isFirstHlsQualityReady($videoQualitiesStatusHLS) !== true);
 
         // Compute EncodingTime measure
         $encodingTime = microtime(true) - $startEncodingTime;
@@ -198,5 +201,14 @@ class BenchApiVideoService
         return [
             'TimeToPlayback' => $timeToPlayback,
         ];
+    }
+
+    private function isFirstHlsQualityReady($videoQualitiesStatusHLS): bool{
+        foreach ($videoQualitiesStatusHLS as $videoQualityStatusHLS){
+            if($videoQualityStatusHLS['status'] === 'encoded'){
+                return true;
+            }
+        }
+        return false;
     }
 }

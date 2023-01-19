@@ -26,7 +26,7 @@ class BenchYoutubeService
     #[ArrayShape(['TimeToEncodeFirstQuality' => "", 'FullTimeToEncode' => "", 'TimeToPlayback' => "null"])]
     public function performVod(string $videoUriPath): array
     {
-        // Youtube doesn't support upload from URL so the app have to download it first and then upload the file
+        // YouTube doesn't support upload from URL so the app have to download it first and then upload the file
         $filePath = sys_get_temp_dir().'/'.basename($videoUriPath);
         file_put_contents(
             $filePath,
