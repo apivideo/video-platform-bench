@@ -51,7 +51,6 @@ class BenchJWPlayerService
             sleep(1);
         } while (strpos($file_headers[0], '404') !== false);
         $masterManifestHls = file_get_contents("https://cdn.jwplayer.com/manifests/$videoId.m3u8");
-        echo "https://cdn.jwplayer.com/manifests/$videoId.m3u8 \n";
 
         // Extract url of the first playlist manifest
         preg_match('/https:\/\/.*/', $masterManifestHls, $matchMasterHls);

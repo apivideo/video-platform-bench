@@ -13,7 +13,7 @@
         "aws/aws-sdk-php-symfony": "^2.2",
         "google/apiclient": "^2.0",
         "jwplayer/jwplatform": "^1.7",
-        "muxinc/mux-php": "^1.0",
+        "muxinc/mux-php": "^3.8",
         "nyholm/psr7": "^1.4",
         "symfony/console": "5.3.*",
         "symfony/dotenv": "5.3.*",
@@ -34,7 +34,11 @@
         "preferred-install": {
             "*": "dist"
         },
-        "sort-packages": true
+        "sort-packages": true,
+        "allow-plugins": {
+            "symfony/flex": true,
+            "symfony/runtime": true
+        }
     },
     "autoload": {
         "psr-4": {
